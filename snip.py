@@ -8,6 +8,9 @@ def snip():
     im.show()
 
 # Create a GUI window
+
+
+
 root = tk.Tk()
 root.title("Snipping Tool")
 

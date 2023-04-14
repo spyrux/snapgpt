@@ -18,7 +18,7 @@ class Menu(QMainWindow):
 
     default_title = "SnapGPT"
 
-    def __init__(self, numpy_image = None, start_position =(300,300,350,250)):
+    def __init__(self,  numpy_image=None, start_position=(300, 300, 350, 250)):
 
         super().__init__()
         self.centralWidget = QLabel()
@@ -28,6 +28,7 @@ class Menu(QMainWindow):
         self.setWindowIcon(QIcon('background.png'))
         
         self.title = Menu.default_title
+        self.setWindowTitle(self.title)
         new_snip_action = QAction('New', self)
         new_snip_action.setShortcut('Ctrl+N')
         new_snip_action.setStatusTip('Snip!')
@@ -53,25 +54,27 @@ class Menu(QMainWindow):
         self.toolbar.addAction(save_action)
         self.toolbar.addAction(exit_window)
 
-        if numpy_image is not None:
-            
-            self.image = self.convert_numpy_img_to_qpixmap(numpy_image)
-            self.centralWidget.setPixmap(self.image)
-        else:
-            self.image = QPixmap("patrick.png")
-            self.centralWidget.setPixmap(self.image)
+    
              
         
 
         
 
 
-        # self.snippingTool = snipping.SnippingWidget()
+        self.snippingTool = snipping.SnippingWidget()
         self.setGeometry(*start_position)
 
 
+
+    #set image in background to reference for prompt
+        if numpy_image is not None:
+            self.image = self.convert_numpy_img_to_qpixmap(numpy_image)
+            self.centralWidget.setPixmap(self.image)
+        else:
+            self.image = QPixmap("patrick.png")
+            self.centralWidget.setPixmap(self.image)
         
-        self.setWindowTitle(self.title)
+        
         self.resize(self.image.width(), self.image.height() + self.toolbar.height())
 
     
@@ -83,25 +86,31 @@ class Menu(QMainWindow):
         self.show()
 
     
+    
+
     def save_file(self):
         file_path, name = QFileDialog.getSaveFileName(self, "Save file", self.title, "PNG Image file (*.png)")
         if file_path:
             self.image.save(file_path)
 
+
+
+    def closeEvent(self, event):
+        event.accept()
     
     
-    
-    def convert_numpy_img_to_qpixmap(np_img):
+    def convert_numpy_img_to_qpixmap(self, np_img):
         height, width, channel = np_img.shape
         bytesPerLine = 3 * width
-        return QPixmap(QImage(np_img.data, width, height, bytesPerLine, QImage.Format_RGB888).rgbSwapped())
+        return QPixmap(QImage(np_img.data, width, height, bytesPerLine, QImage.Format.Format_RGB888).rgbSwapped())
             
 
     def new_image_window(self):
-            if self.snippingTool.background:
-                 self.close()
-            
-            self.snippingTool.start()
+              
+        self.snippingTool.image_captured.connect(self.convert_numpy_img_to_qpixmap)
+        
+        self.snippingTool.widget_closed.connect(self.snippingTool.close)
+        self.snippingTool.start()
 
 
 
