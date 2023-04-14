@@ -98,7 +98,13 @@ class Menu(QMainWindow):
     def closeEvent(self, event):
         event.accept()
     
-    
+    def set_and_convert_img(self, np_img):
+        self.image = self.convert_numpy_img_to_qpixmap(np_img)
+        self.resize(self.image.width(), self.image.height() + self.toolbar.height())
+        self.centralWidget.setPixmap(self.image)
+
+
+
     def convert_numpy_img_to_qpixmap(self, np_img):
         height, width, channel = np_img.shape
         bytesPerLine = 3 * width
@@ -107,7 +113,7 @@ class Menu(QMainWindow):
 
     def new_image_window(self):
               
-        self.snippingTool.image_captured.connect(self.convert_numpy_img_to_qpixmap)
+        self.snippingTool.image_captured.connect(self.set_and_convert_img)
         
         self.snippingTool.widget_closed.connect(self.snippingTool.close)
         self.snippingTool.start()
