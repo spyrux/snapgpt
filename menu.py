@@ -6,7 +6,7 @@ from PyQt6.QtCore import Qt
 import sys
 import pdb
 import snipping
-
+import snipview
 import table
 
 #todo get ocr connect to openai, display chatbox, be able to type in chatbox and send request to api
@@ -20,7 +20,8 @@ class Menu(QMainWindow):
 
         super().__init__()
         self.pixmaps = []
-        self.centralWidget = table.TableWidget(self.pixmaps)
+        self.viewWidget = snipview.ViewWidget(self.pixmaps)
+        self.centralWidget = table.TableWidget(self.viewWidget)
         self.setCentralWidget(self.centralWidget)
 
         self.setWindowIcon(QIcon('background.png'))
@@ -104,6 +105,8 @@ class Menu(QMainWindow):
     def set_and_convert_img(self, np_img):
         image = self.convert_numpy_img_to_qpixmap(np_img)
         self.pixmaps.append(image)
+        self.viewWidget.addlabel(image)
+        self.viewWidget.repaint()
         
        
 

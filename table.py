@@ -14,7 +14,7 @@ import chat
 class TableWidget(QtWidgets.QWidget):
 
 
-    def __init__(self, pixmaps, parent = None):
+    def __init__(self, viewWidget, parent = None):
         super(QtWidgets.QWidget, self).__init__()
         self.layout = QtWidgets.QVBoxLayout(self)
         self.parent = parent
@@ -22,9 +22,10 @@ class TableWidget(QtWidgets.QWidget):
         self.tabs = QtWidgets.QTabWidget()
         self.tab1 = chat.ChatWidget()
         self.tab2 = QtWidgets.QScrollArea()
-        self.tab2.setWidget(snipview.ViewWidget(pixmaps))
+        self.tab2.setWidget(viewWidget)
         self.tab2.setWidgetResizable(True)
-        self.tab2.show()
+        viewWidget.show()
+        
         self.tabs.addTab(self.tab1, "GPT Chat")
         self.tabs.addTab(self.tab2, "View Snips")
         layout1 = QtWidgets.QVBoxLayout()
